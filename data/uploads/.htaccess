@@ -1,0 +1,16 @@
+# Defense in depth: this folder should only ever serve images. Even if a
+# malicious file somehow got past the upload validation in actions.php,
+# the server must never be allowed to execute it.
+
+<IfModule mod_php.c>
+  php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+  php_flag engine off
+</IfModule>
+
+<FilesMatch "\.(php|php\d|phtml|phar|pl|py|cgi|sh|exe)$">
+  Require all denied
+</FilesMatch>
+
+Options -Indexes

@@ -1,0 +1,70 @@
+Options -Indexes
+
+# ---------------------------------------------------------------------
+# This file is load-bearing on a shared host that does not grant
+# AllowOverride All, and the two halves below fail very differently without it.
+#
+# `Options -Indexes` (above) needs the Options directive. The rewrite block needs
+# mod_rewrite. A host that honours this file with AllowOverride FileInfo — a very
+# common default — rejects `Options` outright and returns 500 for every URL under
+# this directory, which takes the site's content with it. A host without
+# mod_rewrite is worse in a quieter way: the rewrite block never runs, so the
+# three public payloads stop being served and the site renders empty, with no
+# error in any log to explain it. The <IfModule> guard below is what keeps the
+# explicit denies alive in that case; it was missing, and the comment that
+# promised "belt and braces" protection below described a block that could never
+# execute.
+#
+# Nothing in this directory is a public resource except the three
+# derived payloads at the bottom. Everything else is either the admin's
+# private record or runtime state.
+#
+# Anything that is "deny by default" is enforced below with a rewrite
+# rule rather than <FilesMatch>, because FilesMatch only ever sees the
+# *filename* — it cannot match a path, so <FilesMatch "^cache/"> silently
+# does nothing for files sitting inside a subdirectory of the same name.
+# ---------------------------------------------------------------------
+
+# Every request that reaches this directory must name one of the allowed
+# files below. Anything else — content.json, the lock, the error log, the
+# translation cache, future additions — is denied without having to be
+# remembered here.
+#
+# The allowed public surface is:
+#   uploads/            the image library the blog, OG tags and projects
+#                       reference by URL
+#   content-site.json   the homepage payload
+#   content-blog.json   the blog listing payload
+#   content-posts.json  the full article bodies
+#
+# uploads/ is allowed here, in the *parent* context, rather than in
+# data/uploads/.htaccess on purpose. A per-directory rewrite chain is merged
+# child-first, so a "stop processing" rule in the child does win — but the
+# parent is the only context that can see the whole path, and matching
+# `^uploads/` here is what keeps the catch-all below from ever applying to
+# the images. The child's .htaccess keeps the responsibility that only makes
+# sense down there: never execute anything, never list the directory.
+#
+# No RewriteBase on purpose: the site may live in a subdirectory, and these
+# rules only match (they never substitute a path), so a per-directory context
+# is all that is needed and nothing has to be configured per deployment.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^ - [R=404,L]
+  RewriteRule ^uploads/ - [L]
+  RewriteRule ^(content-site|content-blog|content-posts|card|views)\.json$ - [L]
+  RewriteRule ^ - [F,L]
+</IfModule>
+
+# Belt and braces for the case where AllowOverride does not permit
+# mod_rewrite: keep the explicit denies for the paths already known.
+<FilesMatch "^content\.json$">
+  Require all denied
+</FilesMatch>
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>
+<FilesMatch "\.(log|txt|json\.bak)$">
+  Require all denied
+</FilesMatch>

@@ -1,0 +1,33 @@
+<IfModule mod_headers.c>
+  Header always unset Content-Security-Policy
+  # img-src also allows blob: — the branding section previews a newly picked
+  # logo through URL.createObjectURL() before it is uploaded, and without
+  # blob: the browser silently blocks that preview.
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
+</IfModule>
+
+# =========================================================
+# Optional: IP restriction for admin panel
+# Uncomment and set your IP to restrict admin access.
+# =========================================================
+# <RequireAll>
+#   Require ip 127.0.0.1 ::1
+#   Require ip YOUR_IP_HERE
+# </RequireAll>
+#
+# =========================================================
+# These files hold credentials / hashes / attempt counters / the database
+# config and are only ever meant to be require()'d by other PHP scripts. Deny
+# direct HTTP access so a misconfiguration or a future edit that echoes content
+# can never leak them.
+#
+# Every entry is a full basename, spelled out separately, because the shorter
+# form "secret(\.(php|json))?" quietly stopped matching when the store was
+# unified into secrets.php — the optional extension group cannot absorb the
+# extra "s", so the newest and most important file was the one being served.
+#
+# The database entries are included for the same reason: db_config.php returns
+# real credentials, and db_schema.sql / migrate.php describe the storage layout.
+<FilesMatch "^(\.htpasswd|config|secret|secrets|secrets_store|auth_hash|login_attempts|deepl_key|db_config|db|db_schema|migrate|storage|session|errors|db_schema)(\.(php|json|sql))?$">
+  Require all denied
+</FilesMatch>

@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--brand:start-->
+  <title>کارت ویزیت دیجیتال</title>
+  <meta name="description" content="قالب کارت ویزیت دیجیتال با پنل مدیریت و قابلیت نصب به‌صورت PWA.">
+  <!-- Deploying standalone: replace the relative URLs below with absolute ones
+       (https://your-domain.example/...) if you want rich link previews. -->
+  <link rel="canonical" href="index.html">
+  <meta property="og:type" content="profile">
+  <meta property="og:site_name" content="کارت ویزیت دیجیتال">
+  <meta property="og:url" content="index.html">
+  <meta property="og:title" content="کارت ویزیت دیجیتال">
+  <meta property="og:description" content="قالب کارت ویزیت دیجیتال با پنل مدیریت و قابلیت نصب به‌صورت PWA.">
+  <meta property="og:image" content="image/og-cover.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="کارت ویزیت دیجیتال">
+  <meta name="twitter:description" content="قالب کارت ویزیت دیجیتال با پنل مدیریت و قابلیت نصب به‌صورت PWA.">
+  <meta name="twitter:image" content="image/og-cover.jpg">
+  <link rel="icon" href="image/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="image/logo.png">
+  <link rel="apple-touch-icon" href="image/icon-192.png">
+  <!--brand:end-->
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/fonts-catalog.css">
+  <link rel="stylesheet" href="css/print.css" media="print">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2563eb">
+  <link rel="stylesheet" href="css/tokens.css">
+
+  <style>*,*::before,*::after{border-radius:0 !important;} header input,header select,header textarea,.avatar,.avatar.shape-circle{border-radius:50% !important;} .avatar.shape-square{border-radius:0 !important;} .avatar.shape-rounded{border-radius:24px !important;} .lang-menu,.lang-option{border-radius:0 !important;}</style>
+  <style>
+    :root {
+      --bg: #f7f7f9;
+      --card: #ffffff;
+      --text: #101114;
+      --text-2: #4f5159;
+      --text-3: #6f717c;
+      --border: #e7e7ec;
+      --accent: #2563eb;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Tahoma, 'Segoe UI', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 20px 16px;
+    }
+
+    .card {
+      width: min(420px, 100%);
+      background: var(--card);
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 60px -30px rgba(16, 17, 20, 0.9);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-banner {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      background: var(--border);
+    }
+    .card-banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .card-banner a {
+      display: block;
+      width: 100%;
+      height: 100%;
+      text-decoration: none;
+      color: inherit;
+    }
+    .card-banner-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 16px 20px;
+      background: none;
+      color: #fff;
+    }
+    .card-banner-title {
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    .card-banner-sub {
+      font-size: 12px;
+      opacity: 0.9;
+      margin-top: 2px;
+    }
+    .card-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 12px;
+      padding: 36px 28px 24px;
+    }
+
+    .avatar {
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top, #f8f8fb, #f1f1f5);
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 18%;
+    }
+
+    /* Profile photo frame (admin: دایره / مربع / مربع دورگرد) */
+    .avatar.shape-circle { border-radius: 50% !important; }
+    .avatar.shape-square { border-radius: 0 !important; }
+    .avatar.shape-rounded { border-radius: 24px !important; }
+
+    .avatar-initial {
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .identity {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .name {
+      font-size: clamp(20px, 4vw, 24px);
+      font-weight: 600;
+      letter-spacing: -0.03em;
+    }
+
+    .role {
+      font-size: 13px;
+      color: var(--text-2);
+    }
+
+    .socials {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .lang-dropdown { position: relative; display: inline-block; margin-top: 8px; }
+    .lang-toggle { width: 44px; height: 44px; padding: 0; border: 1px solid var(--border); border-radius: 12px; background: var(--card); cursor: pointer; display: grid; place-items: center; overflow: hidden; box-shadow: 0 4px 12px -8px rgba(0,0,0,.2); transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
+    .lang-toggle:hover { transform: translateY(-2px); border-color: var(--accent, #2563eb); box-shadow: 0 8px 18px -10px rgba(0,0,0,.25); }
+    .lang-toggle img { width: 26px; height: 26px; object-fit: cover; border-radius: 6px; }
+    .lang-menu { position: absolute; top: calc(100% + 6px); right: 0; margin: 0; padding: 6px; list-style: none; background: var(--card); border: 1px solid var(--border); border-radius: 0; box-shadow: 0 12px 32px -12px rgba(0,0,0,.35); z-index: 50; min-width: 160px; backdrop-filter: blur(8px); color: #000; }
+    .lang-menu[hidden] { display: none; }
+    .lang-option { display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 10px; border: none; background: transparent; cursor: pointer; font-size: 13px; border-radius: 0; text-align: right; transition: background .12s ease, transform .12s ease; color: #000; }
+    .lang-option span:first-of-type { flex: 1; }
+    .lang-check { opacity: 0; color: var(--accent, #2563eb); font-weight: 700; transition: opacity .12s ease; }
+    .lang-option.is-active .lang-check { opacity: 1; }
+    .lang-option:hover { background: var(--border, rgba(0,0,0,.06)); transform: translateX(-2px); }
+    .lang-option.is-active { background: rgba(37,99,235,.1); font-weight: 600; }
+    .lang-option img { width: 20px; height: 20px; object-fit: cover; border-radius: 4px; }
+
+    .hero-stats {
+      display: flex;
+      width: 100%;
+      margin-top: 6px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .hero-stats[hidden] {
+      display: none;
+    }
+
+    .hero-stat {
+      flex: 1 1 0;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 0 10px;
+    }
+
+    .hero-stat:not(:first-child) {
+      border-inline-start: 1px solid var(--border);
+    }
+    .hero-stat:not(:last-child) {
+      border-inline-end: 1px solid var(--border);
+      margin-inline-end: -1px;
+    }
+
+    .hero-stat-num {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .hero-stat-label {
+      font-size: 10.5px;
+      color: var(--text-3);
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .social-link {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-2);
+      border: 1px solid var(--border);
+      transition: all 160ms ease;
+      text-decoration: none;
+      background: transparent;
+    }
+
+    .social-link:hover {
+      color: var(--text);
+      border-color: rgba(16, 17, 20, 0.4);
+    }
+
+    .social-link:active {
+      transform: translateY(1px);
+    }
+
+    .social-link svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .template01-socials {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .template01-socials a {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      color: var(--text-2);
+      background: transparent;
+      transition: all 160ms ease;
+      text-decoration: none;
+    }
+
+    .template01-socials a:hover,
+    .template01-socials a:focus-visible {
+      color: var(--text);
+      border-color: rgba(16, 17, 20, 0.5);
+    }
+
+    .template01-socials a svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .about-text {
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--text-2);
+      text-align: justify;
+      text-justify: inter-word;
+    }
+
+    .custom-section-text {
+      white-space: pre-line;
+    }
+
+    .card-footer {
+      margin: 18px auto 0;
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-2);
+    }
+
+    .card-footer a {
+      color: inherit;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .timeline-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+    }
+
+    .timeline-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .timeline-role {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .timeline-org {
+      font-size: 12px;
+      color: var(--text-2);
+    }
+
+    .timeline-meta {
+      font-size: 11px;
+      color: var(--text-3);
+      text-align: right;
+    }
+
+    .timeline-item {
+      position: relative;
+    }
+
+    .timeline-item.has-details {
+      cursor: pointer;
+    }
+
+    .timeline-info {
+      display: inline-block;
+      margin-inline-start: 6px;
+      font-size: 12px;
+      color: var(--text-3);
+      vertical-align: middle;
+    }
+
+    .exp-detail-tip {
+      position: fixed;
+      z-index: 9999;
+      max-width: 560px;
+      min-width: 340px;
+      padding: 12px 15px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.28));
+      backdrop-filter: blur(22px) saturate(180%);
+      -webkit-backdrop-filter: blur(22px) saturate(180%);
+      color: #0f172a;
+      font-size: 12.5px;
+      line-height: 1.75;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      box-shadow:
+        0 24px 48px -16px rgba(15, 23, 42, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.7),
+        0 0 0 1px rgba(255, 255, 255, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      pointer-events: auto;
+      animation: tipIn .18s ease;
+    }
+
+    @keyframes tipIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    @media (max-width: 420px) {
+      .exp-detail-tip {
+        min-width: 0;
+        width: calc(100vw - 24px);
+        max-width: calc(100vw - 24px);
+      }
+    }
+
+    .tags-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .pill {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-2);
+    }
+
+    .edu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .edu-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+    }
+
+    .edu-title {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .edu-org {
+      font-size: 12px;
+      color: var(--text-2);
+    }
+
+    .edu-meta {
+      font-size: 11px;
+      color: var(--text-3);
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0 28px;
+    }
+
+    .section {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 22px 28px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .section-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-3);
+    }
+
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      text-decoration: none;
+      color: inherit;
+      transition: all 160ms ease;
+    }
+
+    .list-item:hover {
+      border-color: var(--border);
+    }
+
+    .list-item-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      color: var(--text-2);
+      flex-shrink: 0;
+    }
+
+    .list-item-icon svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .list-item-text {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .list-item-label {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .list-item-value {
+      font-size: 12px;
+      color: var(--text-3);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .list-item-arrow {
+      margin-left: auto;
+      color: var(--text-3);
+      display: inline-flex;
+    }
+
+    .list-item-arrow svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .flags {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding: 4px 0;
+    }
+    .flags::-webkit-scrollbar { height: 3px; }
+    .flags::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .slogan {
+      font-size: 12px;
+      color: var(--accent);
+      font-style: italic;
+      margin-top: 6px;
+      text-align: center;
+      letter-spacing: 0.02em;
+      opacity: 0.9;
+    }
+
+    /* Glass effect for contact items */
+    .list-item {
+      background: linear-gradient(135deg, rgba(255,255,255,0.55), rgba(255,255,255,0.25));
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.6);
+      transition: all 220ms ease;
+    }
+    .list-item:hover,
+    .list-item:active {
+      background: linear-gradient(135deg, rgba(37,99,235,0.12), rgba(37,99,235,0.04));
+      border-color: rgba(37,99,235,0.4);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px -12px rgba(37,99,235,0.5);
+    }
+
+    .gallery {
+      position: relative;
+      overflow: hidden;
+      border-radius: 12px;
+      cursor: zoom-in;
+      touch-action: pan-y;
+    }
+    .gallery-item {
+      position: relative;
+      display: none;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #f1f1f5;
+    }
+    .gallery-item.active {
+      display: block;
+    }
+    .gallery-item img {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      transition: transform 220ms ease;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-user-drag: none;
+      -webkit-touch-callout: none;
+    }
+    .gallery-item:hover img {
+      transform: none;
+    }
+    .gallery-counter {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(0, 0, 0, 0.92);
+      touch-action: none;
+    }
+    .lightbox.open {
+      display: flex;
+    }
+    .lightbox img {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-user-drag: none;
+      -webkit-touch-callout: none;
+    }
+    .lightbox-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      font-size: 24px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 2;
+    }
+    body.lightbox-open {
+      overflow: hidden;
+    }
+
+    .card-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding:14px 22px 18px;margin-top:8px}
+    .action-btn{appearance:none;border:1px solid var(--border);background:var(--card);color:var(--text);font:inherit;font-size:13px;font-weight:600;padding:9px 14px;border-radius:999px;cursor:pointer}
+    .action-btn--secondary{background:transparent;color:var(--text-2)}
+    .resume-card{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border:1px solid var(--border);border-radius:14px;background:linear-gradient(180deg,#fff,#f8fafc)}
+    .resume-meta{display:flex;flex-direction:column;gap:2px;min-width:0}
+    .resume-name{font-size:13.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .resume-hint{font-size:12px;color:var(--text-3)}
+    .resume-download{flex:none;display:inline-flex;align-items:center;gap:6px;padding:9px 13px;border-radius:999px;background:var(--accent);color:#fff;text-decoration:none;font-size:12.5px;font-weight:600}
+.map-block{display:flex;flex-direction:column;gap:10px}
+.map-address{font-size:14px;line-height:1.8;color:var(--text);white-space:pre-wrap}
+.map-links{display:flex;flex-direction:column;gap:8px}
+.map-link{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:999px;text-decoration:none;color:var(--accent);border:1px solid var(--accent);background:linear-gradient(135deg,var(--accent)22,var(--accent)0a);font-size:13px;font-weight:600;transition:all 160ms ease}
+.map-link:hover{background:var(--accent-soft);border-color:var(--accent)}
+.map-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);margin:0 4px;flex-shrink:0}
+.edu-file-link{display:inline-flex;align-items:center;gap:6px;margin-top:6px;padding:6px 12px;border-radius:999px;border:1px solid var(--accent);background:var(--accent-soft);color:var(--accent);text-decoration:none;font-size:12px;font-weight:600}
+    .offline-banner{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 14px;border-radius:999px;font-size:12.5px;font-weight:600;box-shadow:0 18px 40px -20px rgba(15,23,42,.6);z-index:60}
+
+    .flag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      background: #f1f1f5;
+      flex-shrink: 0;
+      transition: transform 160ms ease;
+    }
+    .flag:hover { transform: scale(1.12); }
+
+    .flag img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .flag-code {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--text-2);
+      letter-spacing: 0.02em;
+    }
+
+    .projects {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .project-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      text-decoration: none;
+      color: inherit;
+      border: 1px solid var(--border);
+      transition: all 160ms ease;
+    }
+
+    .project-link:hover {
+      background: #f9f9fb;
+    }
+
+    .project-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin: 0 4px;
+      flex-shrink: 0;
+    }
+
+    .project-text {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .project-title {
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .project-sub {
+      font-size: 12px;
+      color: var(--text-3);
+    }
+
+    .project-arrow {
+      margin-left: auto;
+      color: var(--text-3);
+      display: inline-flex;
+    }
+
+    .project-arrow svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .cta {
+      display: flex;
+      padding: 0 28px 28px;
+    }
+
+    .cta-link {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 16px;
+      border-radius: 999px;
+      text-decoration: none;
+      color: var(--text);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 160ms ease;
+    }
+
+    .cta-link:hover {
+      background: #f9f9fb;
+    }
+
+    .cta-link svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    @media (max-width: 420px) {
+      .card-header {
+        padding: 30px 22px 20px;
+      }
+
+      .section {
+        padding: 18px 22px;
+      }
+
+      .divider {
+        margin: 0 22px;
+      }
+
+      .cta {
+        padding: 0 22px 24px;
+      }
+
+      .list-item,
+      .project-link {
+        border-radius: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <article class="card">
+    <div class="card-banner" id="card-banner" style="display:none">
+      <a id="card-banner-link" href="#" target="_blank" rel="noopener">
+        <img id="card-banner-img" src="" alt="">
+        <div class="card-banner-overlay">
+          <div class="card-banner-title" id="card-banner-title" dir="auto"></div>
+          <div class="card-banner-sub" id="card-banner-sub" dir="auto"></div>
+        </div>
+      </a>
+    </div>
+    <header class="card-header">
+      <div class="avatar" id="card-avatar">
+        <div class="avatar-initial">؟</div>
+      </div>
+      <div class="identity">
+        <h1 class="name" id="card-name" dir="auto">نام شما</h1>
+        <p class="role" id="card-role" dir="auto">عنوان شغلی شما</p>
+        <p class="slogan" id="card-slogan" style="display:none" dir="auto"></p>
+      </div>
+      <div class="template01-socials" id="card-socials"></div>
+      <div class="lang-dropdown" id="langDropdown">
+        <button type="button" class="lang-toggle" id="langToggle" aria-haspopup="listbox" aria-expanded="false">
+          <img id="langToggleFlag" src="image/flags/ir.png" alt="">
+        </button>
+        <ul class="lang-menu" id="langMenu" role="listbox" hidden>
+          <li><button type="button" class="lang-option" data-lang="fa"><img src="image/flags/ir.png" alt=""> <span>فارسی</span><span class="lang-check">✓</span></button></li>
+          <li><button type="button" class="lang-option" data-lang="en"><img src="image/flags/gb.png" alt=""> <span>English</span><span class="lang-check">✓</span></button></li>
+        </ul>
+      </div>
+      <div class="hero-stats" id="card-stats" hidden></div>
+    </header>
+
+    <div class="divider"></div>
+
+    <div id="card-sections-container">
+      <section class="section" id="card-about-section" data-section="about" style="display:none">
+        <header class="section-header">
+          <h2 class="section-title" dir="auto" data-i18n="secAbout">About Me</h2>
+        </header>
+        <p class="about-text" id="card-about" dir="auto"></p>
+      </section>
+      <div class="divider" data-section-divider="about" style="display:none"></div>
+
+      <section class="section" id="card-countries-section" data-section="countries">
+        <header class="section-header">
+          <h2 class="section-title" dir="auto" data-i18n="secCountries">Countries I've Worked In</h2>
+        </header>
+        <div class="flags" id="card-countries"></div>
+      </section>
+      <div class="divider" data-section-divider="countries"></div>
+
+      <section class="section" id="card-contact-section" data-section="contact">
+        <header class="section-header">
+          <h2 class="section-title" dir="auto" data-i18n="secContact">Contact</h2>
+        </header>
+        <div class="list" id="card-contacts"></div>
+      </section>
+      <div class="divider" data-section-divider="contact"></div>
+
+      <section class="section" id="card-socials-section" data-section="socials">
+        <header class="section-header">
+          <h2 class="section-title" dir="auto" data-i18n="secSocials">Social Media</h2>
+        </header>
+        <div class="template01-socials" id="card-socials-inline"></div>
+      </section>
+      <div class="divider" data-section-divider="socials"></div>
+
+      <section class="section" id="card-experience-section" data-section="experience" style="display:none">
+        <header class="section-header">
+          <h2 class="section-title" dir="auto" data-i18n="secExperience">Work Experience</h2>
+        </header>
+        <div class="timeline" id="card-experience"></div>
+      </section>
+      <div class="divider" data-section-divider="experience" style="display:none"></div>
+
+      <section class="section" id="card-skills-section" data-section="skills" style="display:none">
+        <header class="section-header">
+          <h2 class="section-title" dir="auto" data-i18n="secSkills">Skills</h2>
+        </header>
+        <div class="tags-list" id="card-skills"></div>
+      </section>
+      <div class="divider" data-section-divider="skills" style="display:none"></div>
+
+      <section class="section" id="card-education-section" data-section="education" style="display:none">
+        <header class="section-header">
+           <h2 class="section-title" dir="auto" data-i18n="secEducation">Education</h2>
+        </header>
+        <div class="edu-list" id="card-education"></div>
+      </section>
+      <div class="divider" data-section-divider="education" style="display:none"></div>
+
+       <section class="section" id="card-certs-section" data-section="certs" style="display:none">
+         <header class="section-header">
+           <h2 class="section-title" dir="auto" data-i18n="secCerts">Certifications</h2>
+         </header>
+         <div class="edu-list" id="card-certs"></div>
+       </section>
+       <div class="divider" data-section-divider="certs" style="display:none"></div>
+
+      <section class="section" id="card-gallery-section" data-section="gallery" style="display:none">
+        <header class="section-header">
+          <h2 class="section-title" dir="auto" data-i18n="secGallery">Gallery</h2>
+        </header>
+        <div class="gallery" id="card-gallery"></div>
+      </section>
+      <div class="divider" data-section-divider="gallery" style="display:none"></div>
+
+      <section class="section" id="card-portfolio-section" data-section="portfolio">
+        <header class="section-header">
+          <h2 class="section-title" dir="auto" data-i18n="secProjects">Projects</h2>
+        </header>
+        <div class="projects" id="card-portfolio"></div>
+      </section>
+      <div class="divider" data-section-divider="portfolio"></div>
+
+      <section class="section" id="card-map-section" data-section="map" style="display:none">
+        <header class="section-header">
+          <h2 class="section-title" dir="auto" data-i18n="secMap">Location &amp; Map</h2>
+        </header>
+        <div class="map-block" id="card-map"></div>
+      </section>
+      <div class="divider" data-section-divider="map" style="display:none"></div>
+
+      <section class="section" id="card-resume-section" data-section="resume" style="display:none">
+        <header class="section-header">
+          <h2 class="section-title" dir="auto" data-i18n="secResume">Resume</h2>
+        </header>
+        <div id="card-resume"></div>
+      </section>
+      <div class="divider" data-section-divider="resume" style="display:none"></div>
+    </div>
+
+    <div class="card-actions" id="card-actions">
+      <button type="button" class="action-btn" id="print-btn" data-i18n="print">Print / Save PDF</button>
+      <button type="button" class="action-btn action-btn--secondary" id="png-btn" data-i18n="savePng">Save as PNG</button>
+      <button type="button" class="action-btn action-btn--secondary" id="install-btn" hidden data-i18n="install">Install app</button>
+    </div>
+  </article>
+
+  <div class="offline-banner" id="offline-banner" hidden aria-hidden="true">You're offline — showing saved content.</div>
+
+  <footer class="card-footer">
+    <span>Digital Business Card</span>
+  </footer>
+
+  <div class="lightbox" id="card-lightbox" role="dialog" aria-modal="true" aria-label="Image preview" aria-hidden="true">
+    <button type="button" class="lightbox-close" aria-label="Close preview">&times;</button>
+    <img alt="" draggable="false">
+  </div>
+
+  <script src="js/app-shell.js" defer></script>
+  <script src="js/html2canvas.min.js" defer></script>
+<script src="js/card.js?v=58" defer></script>
+</body>
+</html>

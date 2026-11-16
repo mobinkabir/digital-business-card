@@ -1,0 +1,112 @@
+# =========================================================
+#  Standalone digital business card — Apache config
+#
+#  This is a trimmed copy of the full-site .htaccess. The
+#  domain-specific parts are gone on purpose:
+#    - no canonical www / HTTPS rewrite (works on any host
+#      and any subdirectory without editing this file)
+#    - no Host allow-list (that only makes sense for one domain)
+#  Add them back once you know the domain the card lives on.
+#
+#  Everything below is independent of the domain name.
+# =========================================================
+
+# No directory listings anywhere (subfolders keep their own overrides).
+Options -Indexes
+
+<IfModule mod_headers.c>
+
+  # --- Content-Security-Policy ---
+  # script-src stays strict (no 'unsafe-inline'); style-src needs
+  # 'unsafe-inline' because the card page and the admin panel use
+  # inline <style> blocks. Everything else is self-hosted.
+  # The admin panel (admin/*.php) overrides this in admin/.htaccess.
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self' mailto:; object-src 'none'"
+
+  # --- Clickjacking protection ---
+  Header always set X-Frame-Options "SAMEORIGIN"
+
+  # --- Stop MIME-type sniffing ---
+  Header always set X-Content-Type-Options "nosniff"
+
+  # --- Legacy XSS filter (older browsers) ---
+  Header always set X-XSS-Protection "1; mode=block"
+
+  # --- Cross-Origin isolation ---
+  Header always set Cross-Origin-Opener-Policy "same-origin"
+  Header always set Cross-Origin-Resource-Policy "same-origin"
+
+  # --- Referrer leakage control ---
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # --- Lock down browser features the card doesn't use ---
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=(), interest-cohort=()"
+
+</IfModule>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Block hidden/dot directories (e.g. .git) while keeping the
+  # ACME challenge path working.
+  RewriteRule (^|/)\.(?!well-known) - [F,L]
+</IfModule>
+
+# =========================================================
+#  Keep a high-resolution master photo off the web if one is
+#  ever dropped next to the display copy.
+# =========================================================
+<IfModule mod_authz_core.c>
+  <Files "photo.jpg">
+    Require all denied
+  </Files>
+</IfModule>
+
+# =========================================================
+#  HTTP caching: long-lived immutable caches for hashed/static
+#  media and fonts. HTML and JSON stay fresh so admin edits
+#  always propagate immediately. CSS/JS revalidate quickly.
+# =========================================================
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/jpeg    "access plus 1 year"
+  ExpiresByType image/png     "access plus 1 year"
+  ExpiresByType image/webp    "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/x-icon  "access plus 1 year"
+  ExpiresByType font/woff     "access plus 1 year"
+  ExpiresByType font/woff2    "access plus 1 year"
+  ExpiresByType application/font-woff2 "access plus 1 year"
+  ExpiresByType text/html     "access plus 0 seconds"
+  ExpiresByType application/json "access plus 120 seconds"
+  ExpiresByType text/css      "access plus 0 seconds"
+  ExpiresByType application/javascript "access plus 0 seconds"
+  ExpiresDefault "access plus 1 month"
+</IfModule>
+
+# =========================================================
+#  Static compression: Brotli when available, GZIP otherwise.
+# =========================================================
+<IfModule mod_brotli.c>
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/css text/plain text/xml
+  AddOutputFilterByType BROTLI_COMPRESS application/javascript application/json application/xml image/svg+xml
+</IfModule>
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml
+  AddOutputFilterByType DEFLATE application/javascript application/json application/xml image/svg+xml
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(jpe?g|png|webp|svg|ico|woff2?|pdf)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.(html)$">
+    Header set Cache-Control "public, max-age=300, stale-while-revalidate=600"
+  </FilesMatch>
+  <FilesMatch "\.(css|js)$">
+    Header set Cache-Control "public, max-age=600, must-revalidate"
+  </FilesMatch>
+  <FilesMatch "\.json$">
+    Header set Cache-Control "public, max-age=120, stale-while-revalidate=600"
+  </FilesMatch>
+</IfModule>

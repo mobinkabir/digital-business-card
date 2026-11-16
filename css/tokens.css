@@ -1,0 +1,724 @@
+/* ==========================================================================
+   tokens.css — the single source of truth for colour, type and geometry.
+   ==========================================================================
+
+   WHY THIS FILE EXISTS
+
+   Every page used to ship its own copy of the palette. index.html loaded
+   css/main.css, blog.html loaded css/blog.css, the 24 static post pages loaded
+   css/blog-post.css, and 404.html and privacy.html each loaded their own. Five
+   stylesheets, five palettes, no shared source.
+
+   They drifted apart silently. The homepage palette was corrected to warm
+   graphite with a single cool signal, and for a long time the blog, the post
+   pages, the 404 and the privacy page all kept the old cold blue — including
+   the indigo->purple gradient that had been removed from the homepage as the
+   most recognisable "generic tech site" tell. Nothing caught it, because the
+   palette tests only ever read css/main.css.
+
+   Root cause: a page that links one stylesheet cannot inherit tokens it never
+   receives, so each one redefined the palette by hand. Changing the design
+   system then meant five hand-edits, and four of them were forgotten.
+
+   The fix is structural, not cosmetic. This file is the only place the palette
+   is written down. Every page links it before its own stylesheet, and the
+   per-page files no longer declare any palette token — they only style their
+   own components and consume these variables.
+
+   To change the palette, edit this file. One edit, every page follows.
+   tests/palette.test.mjs reads every stylesheet and fails if a second palette
+   reappears anywhere.
+
+   Load order matters: tokens.css first, then the page stylesheet, so a page's
+   own rules can still override individual components without owning the ramp.
+   ========================================================================== */
+
+:root{
+  /* ---- Surfaces: the blue-black ramp ---------------------------------
+     Measured off the previous site rather than chosen again by eye.
+     the project reference site in dark mode, read from getComputedStyle on the
+     live page: page rgb(10,18,31), card rgb(16,27,46), inset rgb(13,23,40),
+     hairline rgb(30,51,80), body text rgb(234,241,248), secondary
+     rgb(140,160,190), tertiary rgb(93,114,145), accent rgb(76,110,245),
+     amber rgb(245,165,36). Those eight are the theme.
+
+     The ramp is one temperature — every neutral is on the blue side, and the
+     blue deepens as the surface lifts. That is the opposite of the warm
+     graphite this file used to carry, and it is a deliberate reversal: the
+     warm ramp was pinned here by a rule in tests/palette.test.mjs that forbade
+     cool-shifted neutrals, and that rule has been inverted to match. A
+     single-temperature palette is one-note by construction; what keeps it
+     from reading flat is the four-step surface ladder and the hairline, not a
+     second hue. */
+  --ink:#0A121F;         /* page background, blue-black */
+  --panel:#101B2E;       /* card surface, lifted from the page */
+  --panel-2:#0D1728;     /* recessed: input fields, code, insets */
+  --panel-3:#16233A;     /* raised: hovered cards, menus, tooltips */
+
+  --line:#1E3350;        /* visible border */
+  --line-soft:#16273D;   /* internal divider, low emphasis; also the 42px grid line */
+
+  /* ---- Text: cool neutrals, matching the surfaces -------------------- */
+  --paper:#EAF1F8;       /* primary text on --ink */
+  --muted:#8CA0BE;       /* secondary text */
+  --muted-2:#7790B3;     /* tertiary text, meta, timestamps */
+
+  /* ---- Signal -------------------------------------------------------
+     The live site's accent is #4C6EF5. It is carried here as #5A82FF, and both
+     steps of that change are forced by measurement rather than taste.
+
+     The live value reads 4.32:1 under white and 4.34:1 on its own dark page, so
+     it misses AA whichever way it is read. This accent does both jobs — the
+     same token fills buttons and colours prose links, the eyebrow and the tag
+     pills — so one value has to satisfy both, and the constraints turn out to
+     point the same way once the surface is the card rather than the page.
+     As text it has to be light: 4.5:1 against --panel-2 needs L >= 0.2133. As a
+     fill under a dark label it has to stay dark, and #5A82FF at L 0.2505 takes
+     --on-accent at 5.43:1. A single white label was never available on any
+     value: the two 4.5:1 thresholds sit on opposite sides of the same
+     luminance, so one accent fill cannot serve both a white and a dark label.
+     That is why --on-accent below is the page ink and not #FFFFFF.
+
+     #5A82FF is 4.55:1 on the lightest surface in the theme (--panel-3) and
+     4.98:1 on the card, so accent text is legible wherever it lands. The drift
+     from the live value is a lighter, slightly more violet blue, and it is the
+     price of AA text on a dark card. */
+  --signal:#6087FF;
+  --signal-dim:#17244A;  /* accent fill behind accent text */
+  --signal-hover:#6B87F8; /* accent on hover: lighter on near-black */
+  --tag-ink:#A9BCFF;     /* accent text on --signal-dim */
+  --on-accent:#0A121F;   /* label on a --signal fill: dark, see above */
+
+  /* Amber is reserved for status and the key light. Never decoration,
+     never a filled surface: a second accent would read as a theme rather than
+     a state. */
+  --amber:#F5A524;
+
+  /* ---- Semantic status --------------------------------------------
+     Used by the contact form (invalid field, error/success/warning
+     messages) and by the article page's related-post and table-of-contents
+     surfaces. These live here rather than in the page stylesheets because
+     they are part of the design system: a form error on the homepage and a
+     form error on a post page must be the same red, and a token declared in
+     only one file is a colour that silently disappears on the other. */
+  --danger:#FF8A8A;        /* form error text: readable on blue-black */
+  --danger-ring:rgba(255,138,138,.3);
+  --success:#7BD8A0;
+  --warn:#FFC46B;
+
+  /* Content surfaces, not palette. Kept as tokens so the article page does not
+     hard-code a fill that would ignore the theme. */
+  --rel-bg:var(--panel-2);
+  --toc-bg:var(--panel-2);
+
+  /* Flat accent. This was linear-gradient(135deg,#4349D8,#6A55E8). */
+  --grad:var(--signal);
+
+  /* ---- Social brand colours ------------------------------------------
+     Each network gets its own colour instead of every icon sharing the page
+     accent, which made the row of social links read as one undifferentiated
+     set of buttons.
+
+     They are declared here, not in a page stylesheet, for two reasons. This
+     file is the single palette, and the same row of links is rendered by the
+     homepage, the blog listing and the post pages — a per-page copy is exactly
+     the drift tokens.css exists to prevent. And tests/palette.test.mjs refuses
+     a raw colour in any component rule, so a brand hex outside this file would
+     fail the suite.
+
+     Two of the seven are monochrome marks whose canonical hex is unusable on
+     one of the two themes, so --brand flips with the theme below:
+       * X is black. On the dark panel that is 1.1:1 — the mark disappears. X's
+         own dark UI draws the mark off-white, so the dark theme does too.
+       * GitHub is #24292F, 2.7:1 on --panel even after being pulled toward the
+         text colour. GitHub's own dark UI uses #C9D1D9 for the same reason.
+
+     The knockout colour (--on-*) is per brand, not one global white, because
+     white is not readable on every one of these fills. It is 4.0:1 on
+     YouTube's red, 4.0:1 on Instagram's, but only 2.0:1 on WhatsApp's green
+     and 3.0:1 on Telegram's blue, so those two knock out with near-black. All
+     seven clear the 3:1 that WCAG 1.4.11 asks of a graphical object. */
+  --brand-youtube:#FF0000;   --on-youtube:#FFFFFF;
+  --brand-telegram:#229ED9;  --on-telegram:#0A0A0A;
+  --brand-whatsapp:#25D366;  --on-whatsapp:#0A0A0A;
+  --brand-instagram:#E4405F; --on-instagram:#FFFFFF;
+  --brand-linkedin:#0A66C2;  --on-linkedin:#FFFFFF;
+  --brand-x:#E7E9EA;         --on-x:#0A0A0A;
+  --brand-github:#C9D1D9;    --on-github:#0A0A0A;
+
+  /* How much of the raw brand survives into --brand-ink. Declared per theme
+     rather than once, because the two mix toward opposite ends of --paper: this
+     one is calibrated against a light cream on a dark panel, the light theme
+     overrides it. See the note on [data-platform] below. */
+  --brand-share:75%;
+
+  /* ---- Type ---------------------------------------------------------
+     One family, and it is the one this project actually ships. The previous
+     stack asked for 'Vazirmatn','IRANYekanX','Gofteh' — none of which had a
+     @font-face anywhere in the project — while the families the JavaScript
+     actually fetched from Google (Inter, Noto Sans SC) were absent from the
+     stack, so the homepage downloaded Inter and then rendered in system-ui.
+     404.html and privacy.html requested only JetBrains Mono and therefore had
+     no body face at all. One sentence, three typefaces, depending on the page.
+
+     The public starter uses a system font stack; optional local fonts can be added
+     variable font (weight 100-900), and is what data/content.json already
+     declared as the site font. system-ui stays as the fallback so the page is
+     still readable if the local sheet fails.
+     --mono is intentionally the platform's own monospace: it is used for code,
+     IP addresses, ports and paths, where a proportional Persian face would
+     destroy column alignment, and no monospace file ships in fonts/. */
+  --font-body:Tahoma, 'Segoe UI', system-ui, sans-serif;
+  --font-display:var(--font-body);
+  --mono:ui-monospace, SFMono-Regular, 'Cascadia Mono', 'Segoe UI Mono', Menlo, Consolas, monospace;
+
+  /* ---- Geometry -----------------------------------------------------
+     Precise, not bubbly. The blog used 14-22px radii against the homepage's
+     12px, so the two pages had visibly different shapes. */
+  --radius:12px;
+  /* The corner scale, and the one place it is declared. It used to live in
+     main.css, which three of the six stylesheets never load — footer.css,
+     blog.css, privacy.css and 404.css all need a radius and none of them see
+     main.css's :root. Every one of them had fallen back to writing its own
+     literal instead, which is how the same social button ended up 8px on
+     mobile, 9px in the sidebar and 10px in the footer. tokens.css is loaded by
+     every page, so the scale belongs here. */
+  --radius-sm:10px;
+  --radius-md:14px;
+  --radius-lg:18px;
+  --radius-xl:24px;
+
+  /* ---- Elevation ---------------------------------------------------
+     A cool top highlight rather than a white one, so the light belongs to the
+     same material as the surface. */
+  --shadow-1:0 1px 0 rgba(226,240,255,.05) inset, 0 8px 20px -14px rgba(0,0,0,.72);
+  --shadow-2:0 1px 0 rgba(226,240,255,.07) inset, 0 18px 34px -18px rgba(0,0,0,.82);
+
+  /* ---- Scrim ---------------------------------------------------------
+     The film a modal puts between itself and the page: the portfolio detail
+     view's ::backdrop. Like --header-bg it is the page's own ink at an alpha
+     rather than a black — a grey or a black over a blue page greys the blue
+     out, and the film is what the eye reads as the colour. Declared here and
+     not in the component because a scrim is a page-level material, and
+     because raw colour in a component sheet is exactly what
+     tests/palette.test.mjs refuses. */
+  --scrim:rgba(10,18,31,.72);
+
+  /* ---- Glass header ------------------------------------------------
+     The live site's own values, carried across: the pill paints
+     rgba(10,18,31,.32) over the page with a rgba(255,255,255,.14) hairline,
+     which is --ink at .32 rather than a grey. A grey film over a blue page
+     greys it out, and the film is what the eye reads as the glass colour. */
+  --header-bg:rgba(10,18,31,.32);
+  --header-border:rgba(255,255,255,.14);
+  /* The header and the footer card are both 60px, and this shadow is what made
+     that look untrue. It threw 30px of soft black below the header while the
+     footer's is 2px, so the header read as the deeper, larger band even with
+     the boxes measured identical. Blur and spread are now the footer's scale
+     and it points down, the way a bar that sits above the content should. */
+  --header-shadow:0 1px 2px -1px rgba(0,0,0,.34), 0 1px 0 rgba(255,255,255,.14) inset, 0 -1px 0 rgba(255,255,255,.05) inset;
+
+  /* ---- The glass material -------------------------------------------
+     The three floating surfaces — the header pill, the footer card and the
+     fixed quick-contact column — are one material, so their surface, border and
+     blur are declared once here and each of them reads all three. Declaring
+     them per component is what let them drift: the header had a translucent
+     background and a backdrop-filter, the footer card had an opaque --panel
+     with no blur at all, and the FAB was a bare accent circle, so the three
+     read as three different products stacked on one page.
+
+     Glass only exists where there is something behind the surface to distort.
+     A semi-transparent fill over an opaque page is just a flat tint, and over a
+     flat tint the blur has nothing to do — which is why the footer card had to
+     stop using --panel. What shows through these three is the page's own
+     gradient, its vignette and its light sources, all declared in tokens.css,
+     so the blur has real work to do and the result survives a page that has no
+     photographs in it.
+
+     --glass-blur is the filter in full, saturate() included: backdrop-filter
+     filters the backdrop, and without saturate() the blur also desaturates it,
+     so a warm page greys out behind the surface. brightness() lifts the
+     backdrop a little so the surface reads as lit rather than as a grey film. */
+  --glass-blur:blur(22px) saturate(180%) brightness(1.1);
+  --glass-shadow:0 8px 24px -12px rgba(0,0,0,.62), 0 1px 0 rgba(255,255,255,.1) inset;
+
+  color-scheme:dark;
+}
+
+html[data-theme="light"]{
+  /* The live site's light theme, measured the same way as the dark one above:
+     the project reference site with data-theme="light" — page rgb(242,245,250),
+     card rgb(255,255,255), inset rgb(241,245,250), hairline rgb(217,226,237),
+     body text rgb(15,27,45), secondary rgb(82,99,126), tertiary rgb(124,140,163),
+     accent rgb(42,68,148), amber rgb(180,112,10).
+
+     Note the page is not white here, and that is the point of the change. The
+     light theme used to sit at #FFFFFF with warm greys around it, which the
+     owner rejected three times as "cream"; the fix then was to force every
+     neutral onto the R=G=B axis. This ramp is the opposite answer to the same
+     problem: the page itself is a cool near-white, so the greys do not have to
+     carry the theme on their own and there is no warm cast anywhere to read as
+     paper. --panel-3 is the one value not on the live site, derived as a step
+     between the inset and the card for hover and menu surfaces. */
+  --ink:#F2F5FA;
+  --panel:#FFFFFF;
+  --panel-2:#F1F5FA;      /* recessed: input fields, code, insets */
+  --panel-3:#F7FAFD;      /* raised: hovered cards, menus, tooltips */
+  --line:#D9E2ED;
+  --line-soft:#E8EEF5;
+
+  --paper:#0F1B2D;
+  --muted:#52637E;        /* 5.6:1 on --panel-2 */
+  /* --muted-2 is 4.5:1 on --panel-2, not the live site's #7C8CA3. That value
+     is 3.13:1 there and 3.42:1 on the card, and it is used for real text —
+     timestamps, the inline paths, the table-of-contents heading — so it cannot
+     be carried across as measured. #647184 is the lightest value that clears
+     4.5:1 against the darkest light surface, and it still sits a visible step
+     below --muted (4.5:1 against 5.6:1) so the two levels do not merge. */
+  --muted-2:#5F6B7D;
+
+  /* #2A4494 is the live accent, carried unchanged: 8.9:1 under a white label
+     and 8.1:1 as text on the page, so unlike the dark theme it needs no
+     correction. Hover goes darker still, because a white theme cannot lighten
+     its accent without the label going with it. */
+  --signal:#2A4494;
+  --signal-dim:#E6EBF7;   /* accent-tinted fill behind accent text */
+  --signal-hover:#22397F;
+  --tag-ink:#2A4494;
+  --on-accent:#FFFFFF;
+
+  /* Darkened from the live #B4700A, which is 3.64:1 on --panel-2. Amber is a
+     text colour here, not only a dot: the hero eyebrow and the project tags are
+     both 12px amber text, and 12px is not large text under WCAG, so it needs
+     the full 4.5:1. #9E6309 is 4.52:1. The dot next to the eyebrow only needed
+     3:1 and now has 4.95:1, which is not a problem. */
+  --amber:#965E09;
+  --grad:var(--signal);
+
+  /* The two monochrome marks turn black on a white page. Their knockouts turn
+     white with them, or the glyph would vanish into its own fill. */
+  --brand-x:#000000;         --on-x:#FFFFFF;
+  --brand-github:#24292F;    --on-github:#FFFFFF;
+
+  /* The resting glyph walks *further* from the raw brand on this theme, because
+     here --paper is near-black and the dark theme's share was calibrated against
+     a light cream. A higher share means MORE raw brand, and the raw brand is
+     what fails on white: WhatsApp at its true green is 2.0:1. */
+  --brand-share:70%;
+
+  /* Darker status values for white. The dark theme's #FF8A8A would sit at about
+     2.1:1 on #FFFFFF, which is not readable. */
+  --danger:#B42318;
+  --danger-ring:rgba(180,35,24,.22);
+  --success:#146C43;
+  --warn:#8A5A0B;
+
+  --rel-bg:var(--panel-2);
+  --toc-bg:var(--panel-2);
+
+  /* Neutral shadows. A brown shadow on a near-white page is a cream page: the
+     tint is too faint to name but it is what the eye picks up as warmth. The
+     blue-black values keep the cool cast. */
+  --shadow-1:0 1px 2px -1px rgba(15,27,45,.08), 0 6px 16px -12px rgba(15,27,45,.14);
+  --shadow-2:0 1px 2px -1px rgba(15,27,45,.10), 0 16px 30px -18px rgba(15,27,45,.18);
+
+  /* The live site's own glass values: the pill paints rgba(255,255,255,.38)
+     with a rgba(255,255,255,.14) hairline. The film is the page white rather
+     than a neutral grey, so the blur over #F2F5FA stays cool. */
+  --header-bg:rgba(255,255,255,.38);
+  --header-border:rgba(255,255,255,.14);
+  /* Same correction as the dark theme above: matched to the footer card's
+     shadow so the two bands have equal visual weight in light mode too. */
+  --header-shadow:0 1px 2px -1px rgba(15,27,45,.14), 0 1px 0 rgba(255,255,255,.16) inset;
+
+  /* The light theme's glass. Only the shadow changes: the surface and the border
+     are --header-bg and --header-border, which are already the right alphas for
+     a white page (.72 white, .1 black), and re-declaring them here is how the
+     two themes would start to disagree. On white the surface needs a shadow
+     with real weight under it, because a white translucent film over a white
+     page has no edge of its own — the shadow is the only thing that draws the
+     boundary. In dark it stays a whisper, since the surface is already lighter
+     than the page. */
+  --glass-shadow:0 8px 24px -10px rgba(16,24,40,.18), 0 1px 0 rgba(255,255,255,.85) inset;
+
+  /* The scrim's light-theme step. The polarity argument from above runs the
+     other way here: a scrim has to darken, so it takes the dark end of the
+     light theme's ladder (--paper, #0F1B2D) rather than the page white. It is
+     also lighter in weight than dark's .72 — the page behind is already
+     bright, so the same alpha would read as a hole punched in the layout
+     instead of as depth over it. */
+  --scrim:rgba(15,27,45,.52);
+
+  color-scheme:light;
+}
+
+/* ---------- social brands, resolved per platform ----------
+   The row of social links is rendered three times over (homepage sidebar,
+   homepage hero, footer, blog sidebar, and the post share bar) from two
+   different scripts, and it looked identical in every one of them: one accent
+   colour for all seven marks. Keying the brand off [data-platform] puts the
+   mapping in one place, so a link is the same colour wherever it is rendered
+   and a new platform is one line here rather than an edit in five sheets.
+
+   --brand      the solid fill the link takes on hover/focus
+   --brand-on   the glyph colour on that fill
+   --brand-ink  the glyph colour at rest
+
+   --brand-ink mixes the brand toward the theme's own text colour instead of
+   using the raw hex. A brand hex is a logo, not a UI colour: WhatsApp's green
+   is 1.4:1 on white and X's black is 1.1:1 on the dark panel, so both failed
+   outright. Pulling the hue toward --paper keeps the brand recognisable while
+   putting the value back in a legible range — every one of the seven clears
+   3:1 on both --panel and --panel-2 in both themes.
+
+   The mix is NOT one fixed ratio, and a single 75% is what left the light theme
+   failing. The two themes mix toward opposite ends, so the same share works in
+   one and not the other: on the dark panel 75% brand is plenty because --paper
+   is a light cream, but on white that same 75% leaves WhatsApp at 1.8:1 and X at
+   1.2:1 — the mix has to walk much further toward the dark end of --paper
+   before a saturated brand lands in a legible range. --brand-share is that
+   ratio, 75% on the dark panel and 90% on white, and every mark clears 3:1 at
+   both. YouTube is exempt and stays at its true red (see below).
+
+   YouTube is the one mark left at its true red: #FF0000 is already 4.0:1 on
+   white and 5.9:1 on the dark panel, and its glyph knocks out a white play
+   triangle, which a lightened red would swallow. */
+[data-platform]{
+  --brand:var(--signal);
+  --brand-on:var(--on-accent);
+  --brand-ink:color-mix(in srgb, var(--brand) var(--brand-share, 75%), var(--paper));
+}
+[data-platform="youtube"]{   --brand:var(--brand-youtube);   --brand-on:var(--on-youtube);   --brand-ink:var(--brand-youtube);}
+[data-platform="telegram"]{  --brand:var(--brand-telegram);  --brand-on:var(--on-telegram);}
+[data-platform="whatsapp"]{  --brand:var(--brand-whatsapp);  --brand-on:var(--on-whatsapp);}
+[data-platform="instagram"]{ --brand:var(--brand-instagram); --brand-on:var(--on-instagram);}
+[data-platform="linkedin"]{  --brand:var(--brand-linkedin);  --brand-on:var(--on-linkedin);}
+[data-platform="x"]{         --brand:var(--brand-x);         --brand-on:var(--on-x);}
+[data-platform="github"]{    --brand:var(--brand-github);    --brand-on:var(--on-github);}
+
+/* The YouTube glyph is the one mark that is two-tone: a filled plate with a
+   play triangle knocked out of it. Left to inherit currentColor the triangle
+   would come out the same red as the plate and the icon would read as a solid
+   blob, so it is filled with the brand's knockout colour instead. */
+.yt-cut{ fill:var(--brand-on, var(--on-accent)); }
+
+/* Windows High Contrast drops author colours and substitutes system ones, which
+   is correct — but the brand system fights it in one place. A page stylesheet
+   remaps links to `LinkText`, a light tint on a light Canvas, and the YouTube
+   triangle was carrying its own knockout fill rather than inheriting
+   `currentColor`. So the plate became a pale tint while the triangle stayed
+   white: white on near-white, and the mark disappeared.
+
+   The fix is to drop the two-tone construction entirely rather than re-map two
+   colours. Flattening the plate to CanvasText and knocking the triangle out in
+   Canvas reads as the mark it always was — a solid glyph with a cut-out — and
+   unlike a remapped brand colour it is guaranteed to invert with the user's
+   chosen theme. `forced-color-adjust:none` is what lets these author values
+   survive the mode at all; without it the browser re-maps them to the same
+   LinkText tint the triangle was already failing against.
+
+   This lives here rather than in a page stylesheet because all five sheets
+   render the same row of social links and only tokens.css is loaded by all
+   five. */
+/* Every page's header is a floating pill pinned 20px from the top and 60px
+   tall, so its lower edge sits at 80px. Landing a section there put its title
+   behind the glass: switching to the FAQ section on index.html left the h2 at
+   viewport y=49, under the bar. scroll-padding-top reserves the bar's height
+   plus a little air for anything that scrolls itself into view — an in-page
+   anchor, a nav button, or scrollIntoView() from script — and it lives here
+   because tokens.css is the one sheet all five pages load. */
+html{scroll-padding-top:98px;}
+
+/* The width and height both bands share. The header pill and the footer card
+   are the same component mirrored top and bottom, and they are sized from these
+   two numbers so they cannot disagree: at full width both were 1560px on a
+   1600px screen, which stretched the footer into a bar rather than a card.
+
+   1168x60 is the header's size on the live site — measured, not guessed:
+   the project reference site paints div.topbar-inner at 1168x60 with
+   border-radius 999px, and header.topbar at 1200x60 with 16px of side padding
+   and top:20px. Both bands here take those two numbers.
+
+   The nav measures 1055px unwrapped, so 1168px still leaves it on one line.
+   There is no max-width breakpoint for these any more: every band that uses
+   --band-w also carries max-width:100%, so below 1168px the clamp in the
+   band itself does the work the old `@media (max-width:1127px){--band-w:100%}`
+   used to, without the two disagreeing at the seam.
+
+   --page-gutter and --page-w are what make that number *hold*. The header
+   pill, the footer card and the page's content column are three separate
+   elements in three separate stylesheets, and until these two numbers existed
+   each one picked its own inset: the header padded 12px (and 20px above
+   768px) while every content container padded 16px, and the containers were
+   capped at 1180px while the bands stayed 1168px. Nothing overlapped and
+   nothing overflowed, so no browser ever reported an error — but at every
+   width the bars were a different width than the text they framed. At 1440px
+   the header and footer measured 1168px against a 1148px content column, so
+   both bands overhung the text by 10px on each side, and below 768px the
+   header was inset 4px less than the text (20px vs 16px on a tablet), which
+   is the "the header does not line up with the text" complaint.
+
+   So the geometry is stated once, here, and everything else derives from it:
+     --page-w   the outer width of the centred page column   (1200px)
+     --gutter   the side inset inside it                     (16px)
+     --band-w   --page-w minus both gutters = the content column
+                width, and the width of the header pill and the
+                footer card                                (1168px)
+   1200/16 is the live site's own numbers, so the two bands and the text
+   column now land on the same edges there and here. A page only has to set
+   --page-w and padding it from --gutter to line up; it cannot drift. */
+:root{--page-w:1200px;}
+:root{--gutter:16px;}
+:root{--band-w:calc(var(--page-w) - var(--gutter) * 2);}
+:root{--band-h:60px;}
+
+/* The reading measure, for the pages whose job is to be read rather than
+   scanned: the 24 article pages and privacy.html.
+
+   These pages are the one place on the site where the content column and the
+   bands are *not* the same width, and the reason is that running text has an
+   upper limit on how wide it can get before it stops being readable. The
+   listing pages hold cards, tag chips and stat numbers, all of which get
+   narrower the wider their column gets, so 1168px is right for them. A
+   paragraph does the opposite.
+
+   The article column measured 780px of 16px text, which came to 113 characters
+   or 22 words on a line against a comfortable 12-16. Past about 16 words the
+   eye loses the start of the next line on the return sweep, and the fix is a
+   narrower column — not a smaller font, which would shrink the whole page to
+   fix one element of it.
+
+   700px is ~16 words at this font, and it is a width the three bands can share:
+   --read-band-w is the article header pill and the footer card on these pages,
+   so the band frames the text instead of overhanging it. At 820px of column the
+   pill ran from x=136 to x=1304 while the text ran from x=330 to x=1110 — the
+   band stuck out 194px past the prose on each side, on a page whose entire
+   subject is the relationship between the two. That is the "the header does not
+   line up with the text" complaint in its clearest form.
+
+   It is expressed as a measure plus its own gutter, so a page adopts it by
+   re-stating the two numbers the rest of the system already derives from:
+   --page-w and --gutter. --band-w then resolves to the measure, which is what
+   makes the article header pill and the article footer card the same width as
+   the prose without either component knowing that reading pages exist.
+
+   640px is ~18 words at this font, down from 22, which is the narrowest the
+   column can go and still read as a page rather than a phone. */
+:root{--read-w:640px;}
+:root{--read-gutter:20px;}
+:root{--read-page-w:calc(var(--read-w) + var(--read-gutter) * 2);}
+
+/* The vertical spacing scale, shared by the reading pages.
+   Four steps off a 4px base, each a multiple of the one below it, so that a
+   section break is visibly larger than a block break and a heading stays tight
+   to the text it introduces. These are the same four values privacy.html uses,
+   declared once so the two page types cannot drift.
+
+   Without it the article column ran 8 / 12 / 22 / 26 / 36 / 40 / 48 — seven
+   numbers, none of them related, and .post-nav alone was 40px here against 34px
+   in blog.css for the same component on the listing page. A reader cannot tell a
+   section boundary from a paragraph boundary at that rate. */
+:root{--sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-6:24px; --sp-8:32px; --sp-12:48px;}
+
+/* The header's total vertical cost, for the same reason --foot-fixed-h exists
+   for the footer. header.topbar is position:sticky with top:20px, so once the
+   page scrolls the band detaches from the flow and parks itself over whatever
+   is at the top of the viewport. A sticky element only reserves its own height
+   while it is still in flow; the space it vacates on the way up is not given
+   back to the content, so the first line of every page slid underneath it.
+
+   100px is the honest figure: --band-h (60) of card plus the 20px the band
+   sits below the top edge, plus 20px of air so the first text clears the pill
+   rather than touching it. Every page's main element pads its top edge by this.
+
+   The old value was 24px of main padding against an 80px band, which left the
+   first heading 56px too high and, once scrolled, fully hidden. */
+:root{--head-fixed-h:100px;}
+
+/* The footer is position:fixed at the bottom (see footer.css), which takes it
+   out of the flow: it covers the bottom of the viewport instead of the end of
+   the page, so nothing reserves room for it by default. This variable is the
+   footer's real height and every page's main element pads its bottom edge by it.
+
+   88px is the desktop figure: 60px of card plus the 20px inset that mirrors the
+   header's top offset, plus the 8px of air js/foot-fixed.js adds.
+
+   It is only correct above 700px, where the card is a single row. Below that it
+   stacks the social row over the legal text, and the legal text wraps to a
+   different number of lines in every language, so no fixed number works for
+   all of them. js/foot-fixed.js measures the card and overwrites this value
+   on load, on resize, and through a ResizeObserver; the number here is the
+   pre-script fallback and the desktop value. */
+:root{
+  --foot-fixed-h: 88px;
+}
+
+/* Everything above the fixed footer needs to clear it. Applying this to the
+   body rather than to main means the padding survives a page that ends in a
+   footer-only flow, and it is on body so a short page still cannot slide its
+   last line underneath. */
+body{
+  padding-bottom: var(--foot-fixed-h);
+}
+
+/* The page background, declared once so all five page stylesheets get the same
+   field. This is the previous site's own wallpaper, ported across rather than
+   re-invented, and it is worth being explicit about why the three radial
+   "lights" that used to live here are gone.
+
+   The key/fill/vignette set was written to argue against a repeating pattern:
+   the note claimed a grid on a large flat field is what makes a page read as a
+   developer template. That is a defensible opinion, and the owner has now seen
+   both and asked for the grid back — because the grid is not the problem. The
+   previous site gets it right for three reasons this had none of:
+
+     1. The line is --line-soft, 1px on a 42px pitch. That is a hairline at 2.4%
+        coverage; the old glows were 11% and 8% washes fighting the text.
+     2. It is opaque --ink underneath, so text contrast is a solved number in
+        both themes rather than a gradient someone has to sample.
+     3. It tiles from `center top`, so the columns are symmetric about the
+        viewport and the header pill at 1168px sits on a seam, not off-grid.
+
+   Measured off the project reference site in both themes via getComputedStyle:
+   dark lines rgb(22,39,61) on rgb(10,18,31), light lines rgb(232,238,245) on
+   rgb(242,245,250), both 42px at center top. --line-soft is the same job on
+   this site and already carries per-theme values, so the grid needs no token
+   of its own and cannot drift away from the hairlines it shares a colour with.
+
+   `background-attachment` is left at its initial `scroll`, which is what the
+   live rule resolves to. The fixed version that was here is a known mobile
+   repaint hazard, and the live page does not do it either. */
+body{
+  background-color:var(--ink);
+  background-image:
+    linear-gradient(var(--line-soft) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+  background-size:42px 42px;
+  background-position:center top;
+}
+
+/* ---------- base type ----------
+   The body typeface is set here, once, rather than in each of the five page
+   stylesheets. That indirection is deliberate: every page stylesheet had its own
+   opinion about font-family, and three of them got it wrong. Article pages set
+   nothing at all and rendered in the browser's default Times New Roman while
+   still downloading the webfont; 404 and privacy hardcoded plain system-ui. All
+   three quietly opted out of the site's own type, and the article bug survived
+   every font test because the @font-face was present — it was simply never
+   asked for. Declaring it on the shared base means a new page cannot inherit the
+   wrong font by omission.
+
+   --mono is the one intentional exception: code, IP addresses, ports and paths
+   need a fixed advance, and no monospace face ships in fonts/. */
+html{font-family:var(--font-body);}
+
+/* ---------- increased contrast preference ----------
+   `prefers-contrast: more` is not a strong-contrast mode like forced-colors. It
+   is a request for *more* contrast, so the soft greys and the translucent header
+   wash get firmed up rather than replaced wholesale.
+
+   Two things this block got wrong, and both are why it lives here:
+
+   1. It only existed in css/main.css, so the blog, the 24 post pages, the 404
+      and the privacy page ignored the preference entirely.
+   2. Its light-theme branch was dead. The overrides were written on `:root`
+      (0,1,0) while the light theme is set on `html[data-theme="light"]`
+      (0,1,1), so in light mode the normal values always won and the
+      high-contrast light theme was identical to the normal one. `html[data-theme]`
+      below ties the light block on specificity and then wins on source order.
+
+   The navy hard-codes it used to carry (#2A2E3F, #5A5F72) are gone: collapsing
+   the muted ramp onto the primary text is right on white for exactly the same
+   reason it is right on black. */
+@media (prefers-contrast: more){
+  html[data-theme]{
+    --muted:var(--paper); --muted-2:var(--paper);
+    --line:var(--paper); --line-soft:var(--paper);
+    --header-border:currentColor;
+  }
+  body{background-image:none !important;}
+  body::after{display:none !important;}
+  a{text-underline-offset:.18em;}
+}
+
+/* ---------- reduced transparency ----------
+   Same reasoning as forced-colors, one step softer: the user has asked for less
+   layering, so the three lights and the grain go while the page keeps its flat
+   colour. This lived only in css/main.css, so the other four page types kept
+   their glow for users who had asked for it to be dropped. */
+@media (prefers-reduced-transparency: reduce){
+  body{background-image:none !important;}
+  body::after{display:none !important;}
+}
+
+/* ---------- forced colors ----------
+   Windows High Contrast repaints the page onto a flat Canvas and drops the
+   backgrounds that were carrying the design. Left in place the atmosphere reads
+   as noise over that flat field, and the grain's `overlay` blend is not honoured
+   here at all, so it renders as a grey film across the whole page. The homepage
+   keeps its own block in css/main.css for the focus ring and the component
+   repaints; the atmosphere and the grain are shared and therefore fixed here. */
+@media (forced-colors: active){
+  html[data-theme]{
+    --line:GrayText; --line-soft:GrayText; --header-border:CanvasText;
+  }
+  html,body{background:Canvas !important; background-image:none !important;}
+  body::after{display:none !important;}
+
+  /* The social marks go here rather than in a block of their own. Two reasons:
+   both were bugs, and both are invisible until this mode is on.
+
+   The YouTube mark is two-tone: a filled plate with the play triangle knocked
+   out of it. The triangle carried `currentColor` and therefore inherited the
+   plate's own colour, so in forced colors the browser remapped the whole SVG to
+   a single pale tint and the mark read as an empty shape with no play glyph at
+   all. Pinning the plate to CanvasText and the triangle back to Canvas restores
+   the two-tone relationship with the flat field behind it.
+
+   `forced-color-adjust:none` is what lets these author values survive the mode
+   at all — without it the browser re-maps them to the same LinkText tint the
+   triangle was already failing against. It lives in this shared block because
+   all five page stylesheets render the same social row and tokens.css is the
+   only stylesheet every one of them loads. */ 
+  [data-platform] svg{ fill:CanvasText !important; stroke:CanvasText !important; forced-color-adjust:none; }
+  .yt-cut{ fill:Canvas !important; forced-color-adjust:none; }
+}
+
+/* Prevent text selection and image download site-wide */
+*, *::before, *::after {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+/* Allow selection in resume/download section */
+.resume-section, .resume-card, .resume-grid, [data-resume], .resume-download, .dl-resume, .resume-download-btn, a[href$=".pdf"] {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+  -webkit-user-drag: auto;
+  user-drag: auto;
+}
+/* Allow selection in form inputs */
+input, textarea, select {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+/* Slightly rounded corners everywhere except selectable fields in header */
+*, *::before, *::after { border-radius: 15px !important; }
+@media (max-width: 640px) {
+  *, *::before, *::after { border-radius: 8px !important; }
+}
+/* Flags keep their own small radius regardless of the global override. */
+.flag-icon { border-radius: 2px !important; }
+.flag-ic { border-radius: 3px !important; }
+header input, header select, header textarea,
+.topbar input, .topbar select, .topbar textarea {
+  border-radius: 999px !important;
+}

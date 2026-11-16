@@ -1,0 +1,7 @@
+/* System font stack. Add locally hosted fonts only when their licence permits redistribution. */
+:root {
+  --app-font-family: Tahoma, "Segoe UI", system-ui, sans-serif;
+}
+html, body, button, input, select, textarea {
+  font-family: var(--app-font-family);
+}

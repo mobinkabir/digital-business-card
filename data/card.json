@@ -1,0 +1,116 @@
+{
+    "name": "نام شما",
+    "role": "عنوان شغلی شما",
+    "tags": [],
+    "stats": [],
+    "about": "این یک متن نمونه است. از پنل مدیریت می‌توانید معرفی، مهارت‌ها و اطلاعات حرفه‌ای خود را وارد کنید.",
+    "slogan": "",
+    "photo": "",
+    "contacts": [],
+    "socials": [],
+    "specialLinks": [],
+    "countries": [],
+    "banner": {
+        "image": "",
+        "url": "",
+        "title": "",
+        "subtitle": ""
+    },
+    "gallery": [],
+    "site_title": "کارت ویزیت دیجیتال",
+    "site_description": "قالب کارت ویزیت دیجیتال با پنل مدیریت و قابلیت نصب به‌صورت PWA.",
+    "site_logo": "",
+    "font_family": "",
+    "bg_color": "#f8fafc",
+    "photo_shape": "circle",
+    "default_language": "fa",
+    "lang_switcher_visible": "1",
+    "date_format": "jalali",
+    "experience": [],
+    "education": [],
+    "certs": [],
+    "projects": [],
+    "about_html": "<p>این یک متن نمونه است. از پنل مدیریت می‌توانید معرفی حرفه‌ای خود را وارد کنید.</p>",
+    "map": {
+        "country": "",
+        "province": "",
+        "city": "",
+        "district": "",
+        "address": "",
+        "balad": ""
+    },
+    "sections": [
+        {
+            "key": "countries",
+            "label": "Countries",
+            "enabled": false,
+            "order": 1
+        },
+        {
+            "key": "about",
+            "label": "About",
+            "enabled": true,
+            "order": 2
+        },
+        {
+            "key": "contact",
+            "label": "Contact",
+            "enabled": false,
+            "order": 3
+        },
+        {
+            "key": "socials",
+            "label": "Social Media",
+            "enabled": false,
+            "order": 4
+        },
+        {
+            "key": "experience",
+            "label": "Experience",
+            "enabled": false,
+            "order": 5
+        },
+        {
+            "key": "skills",
+            "label": "Skills",
+            "enabled": false,
+            "order": 6
+        },
+        {
+            "key": "education",
+            "label": "Education",
+            "enabled": false,
+            "order": 7
+        },
+        {
+            "key": "certs",
+            "label": "Certifications",
+            "enabled": false,
+            "order": 8
+        },
+        {
+            "key": "gallery",
+            "label": "Gallery",
+            "enabled": false,
+            "order": 9
+        },
+        {
+            "key": "portfolio",
+            "label": "Projects",
+            "enabled": false,
+            "order": 10
+        },
+        {
+            "key": "resume",
+            "label": "Resume",
+            "enabled": false,
+            "order": 11
+        },
+        {
+            "key": "map",
+            "label": "Map",
+            "enabled": false,
+            "order": 12
+        }
+    ]
+}

@@ -1,0 +1,48 @@
+{
+    "siteSettings": {
+        "fa": {
+            "heroStatus": "قابل شخصی‌سازی",
+            "heroName": "نام شما",
+            "heroRole": "عنوان شغلی شما",
+            "heroIntro": "این کارت یک نمونهٔ نمایشی است. اطلاعات، مهارت‌ها و راه‌های ارتباطی خود را از پنل مدیریت وارد کنید.",
+            "badgeLabel": "مهارت‌ها",
+            "badgeText": "مهارت اول · مهارت دوم",
+            "stat1Num": "",
+            "stat1Label": "",
+            "stat2Num": "",
+            "stat2Label": "",
+            "stat3Num": "",
+            "stat3Label": "",
+            "aboutTitle": "دربارهٔ من",
+            "aboutBody": "این متن نمونه است و می‌توانید آن را با معرفی خود جایگزین کنید.",
+            "aboutTags": [],
+            "contactIntro": "راه‌های ارتباطی خود را از پنل مدیریت اضافه کنید.",
+            "contactLocation": ""
+        },
+        "en": {
+            "heroStatus": "Ready to customize",
+            "heroName": "Your Name",
+            "heroRole": "Your Professional Title",
+            "heroIntro": "This is a demo profile. Add your own profile details, skills and contact links in the admin panel.",
+            "badgeLabel": "Skills",
+            "badgeText": "Skill One · Skill Two",
+            "stat1Num": "",
+            "stat1Label": "",
+            "stat2Num": "",
+            "stat2Label": "",
+            "stat3Num": "",
+            "stat3Label": "",
+            "aboutTitle": "About Me",
+            "aboutBody": "This is placeholder copy. Replace it with your own introduction.",
+            "aboutTags": [],
+            "contactIntro": "Add your contact methods from the admin panel.",
+            "contactLocation": ""
+        }
+    },
+    "heroPhoto": "",
+    "socialLinks": [],
+    "experience": [],
+    "education": [],
+    "certs": [],
+    "projects": []
+}

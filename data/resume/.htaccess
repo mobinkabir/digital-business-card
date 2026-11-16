@@ -1,0 +1,5 @@
+Options -Indexes
+Require all denied
+<FilesMatch "^[A-Za-z0-9._-]+\.(pdf|doc|docx)$">
+  Require all denied
+</FilesMatch>
