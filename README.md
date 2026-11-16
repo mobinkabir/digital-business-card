@@ -1,79 +1,86 @@
-# Digital Business Card
+# Digital Business Card | کارت ویزیت دیجیتال
 
-A self-hosted, Persian-first digital business card template with a PHP admin panel, JSON-based content storage, and Progressive Web App (PWA) support.
+A self-hosted digital business card built with PHP, HTML, CSS, and vanilla JavaScript. It includes a PHP admin panel, JSON-based content storage, Persian and English interfaces, and Progressive Web App (PWA) support.
+
+[فارسی بخوانید — Persian README](README.fa.md)
 
 <p align="center">
-  <img src="docs/assets/mobile-card-preview.png" alt="Digital Business Card — mobile preview" width="320">
+  <img src="docs/assets/mobile-card-preview.png" alt="Digital Business Card mobile preview" width="320">
 </p>
 
-## Download
+## Get the project
 
 **[Download the complete sanitized source package — v1.1.0](releases/digital-business-card-v1.1.0.zip)**
 
-The ZIP contains the application source and setup documentation. It is a public-ready copy derived from the original project archive; real profile data and the original admin credential hash are not included.
+The downloadable ZIP contains the application source and setup documentation. It is a public-ready copy of the supplied project: real profile data, administrator password hashes, secrets, private uploads, and fonts with unverified redistribution permissions are excluded.
 
-## Project demos
+## See it in action
 
 - [Mobile card walkthrough (WebM)](docs/assets/mobile-card-demo.webm)
 - [Admin panel walkthrough (MP4)](docs/assets/admin-panel-demo.mp4)
-- [Project media and preview](docs/PROJECT_MEDIA.md)
+- [All project media and preview notes](docs/PROJECT_MEDIA.md)
 
 ## Features
 
-- Editable profile, biography, skills, contact methods, social links, and custom links.
-- Work experience, education, certifications, projects, gallery, location, and resume sections.
-- PHP admin panel with password-protected access, CSRF checks, secure sessions, and login-attempt throttling.
-- Persian-first interface with English support and Jalali/Gregorian date handling.
-- Theme and card appearance customization.
-- Installable PWA with service-worker caching and offline fallback.
-- Save as PNG and print or export to PDF through the browser.
-- No database required; editable content is stored in JSON files.
+- **Profile management:** edit the name, professional title, biography, skills, statistics, and profile image.
+- **Contact and social links:** add contact methods, social networks, and custom links.
+- **Professional profile sections:** present work experience, education, certifications, projects, gallery, location, and resume information.
+- **PHP admin panel:** manage card content from a browser-based dashboard.
+- **Access protections:** password-based administrator access, CSRF checks, session handling, and login-attempt throttling.
+- **Persian and English:** bilingual interface with Jalali/Gregorian date handling.
+- **Personalization:** adjust the card's theme and visual appearance.
+- **PWA support:** install the card on supported devices and use the service-worker offline fallback.
+- **Export and print:** save the card as PNG or print/export it to PDF using the browser.
+- **No database required:** editable content is stored in JSON files.
 
 ## Technology
 
 - PHP 8.1+
-- HTML5, CSS3, vanilla JavaScript
+- HTML5 and CSS3
+- Vanilla JavaScript
 - JSON file storage
-- Apache `.htaccess` rules
+- Apache `.htaccess` configuration
 - Progressive Web App APIs
 
-## Quick start
+## Run locally
 
-1. Download and extract the source package.
-2. Open a terminal in the extracted project directory.
-3. Run the PHP development server:
+1. Download and extract the [source package](releases/digital-business-card-v1.1.0.zip).
+2. Make sure PHP 8.1 or newer is installed.
+3. Open a terminal in the extracted project directory.
+4. Start PHP's built-in development server:
 
    ```bash
    php -S 127.0.0.1:8080 -t .
    ```
 
-4. Open http://127.0.0.1:8080/ in your browser.
+5. Visit [http://127.0.0.1:8080](http://127.0.0.1:8080).
 
-The admin page is available at `/admin/login.php`. The public package intentionally does not include an admin account or password hash. Follow the included Persian or English README to create the first admin account securely.
+The administrator sign-in page is available at `/admin/login.php`. The public package does not include a pre-created administrator account or password hash. Follow the included setup guide to create the first administrator credentials on your own server.
 
-## Requirements
+## Requirements and deployment
 
 - PHP 8.1 or newer
-- `mbstring` and `gd` PHP extensions for image-processing workflows
-- JSON and PHP sessions enabled
-- Apache recommended for production hosting
+- PHP `mbstring` and `gd` extensions for image-processing workflows
+- PHP JSON support and sessions enabled
+- Apache is recommended for hosting because the project includes `.htaccess` rules
 
-> GitHub Pages cannot execute PHP. Use a PHP-capable host to deploy the complete application.
+**Important:** GitHub Pages serves static content and cannot execute PHP. To run the complete application, deploy it to a PHP-capable web host.
 
 ## Security and privacy
 
-- The source download contains generic demo content, not the original profile data.
-- Admin credentials, password hashes, secrets, user uploads, and private resume documents are excluded.
-- The original package's default `admin/admin` credential was removed.
-- Fonts with unclear redistribution terms were omitted.
-- The project passed static syntax and JSON checks; it has not undergone an independent security audit.
+- The public source package uses generic demo profile data.
+- Original administrator password hashes, secrets, personal uploads, and private resume files are not included.
+- The original package's default `admin/admin` credentials were removed.
+- Fonts with unclear redistribution permissions were omitted.
+- Static PHP/JavaScript syntax, JSON parsing, service-worker precache paths, and basic HTTP route checks passed in the preparation environment.
+- This project has not undergone an independent security audit or a full production deployment test.
 
-The supplied demo media intentionally shows the contact details displayed on the sample digital card. Review the preview and recordings before redistributing them elsewhere.
+The supplied demo recordings visibly show the contact details configured on the sample card. Review the media before reusing it outside this repository.
 
 ## License
 
-No `LICENSE` file is included by the project owner's choice. Public visibility does not grant permission to reuse, redistribute, or modify the source; standard copyright restrictions apply.
+No `LICENSE` file is included, at the project owner's request. Public availability does not grant permission to reuse, modify, or redistribute the source code. All rights remain with the respective copyright holder(s).
 
 ## Version
 
-`1.1.0`
+**v1.1.0**
