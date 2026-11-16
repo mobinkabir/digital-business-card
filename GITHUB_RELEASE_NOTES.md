@@ -1,23 +1,22 @@
-# Digital Business Card v1.1.0
+# Digital Business Card v1.1.1
 
-## Public source package
+## What's included
+- Clickable Persian and English README language badges.
+- Expanded shared-hosting deployment guide for Apache/cPanel.
+- First-login administrator credentials (`admin` / `admin`) in the downloadable ZIP. Change the password immediately after the first login.
+- Password storage documented as salted BCrypt generated with PHP `password_hash()` and checked with `password_verify()`.
 
-This release package is a sanitized distribution of the supplied project. It uses generic profile data and excludes the original admin password hash, runtime login-attempt data, personal user uploads, and fonts whose redistribution permissions were not verifiable from the supplied archive.
-
-## Highlights
-
-- PHP admin panel with JSON-backed content management
-- Persian-first card with English support
-- PWA manifest and service worker
-- Profile, contact, social, experience, education, certification, projects, and resume sections
-- Mobile preview and user-supplied walkthrough recordings are included in the repository documentation
+## Security notes
+- The downloadable ZIP uses generic demo profile data.
+- The default administrator credential is public and must be changed before the website is exposed to other users.
+- The downloadable ZIP includes only the BCrypt hash for that known demo password; it does not contain a plain-text password in the credential file.
+- Runtime secrets, personal uploads, private documents, and login-attempt data are excluded.
+- The live credential file remains ignored by Git in the normal repository working tree.
 
 ## Requirements
-
 - PHP 8.1+
-- `mbstring` and `gd` recommended for image workflows
-- Apache recommended for production hosting
+- `mbstring` and `gd` extensions
+- Apache recommended; HTTPS required for public PWA/service-worker features
 
 ## Validation
-
-Static PHP syntax, JavaScript syntax, JSON parsing, service-worker precache paths, and basic HTTP route checks were performed in the preparation environment. A full production deployment test and independent security audit have not been completed.
+Static PHP/JavaScript syntax, JSON parsing, service-worker precache paths, and basic HTTP route checks were previously performed in the preparation environment. Full production deployment testing and an independent security audit have not been completed.
